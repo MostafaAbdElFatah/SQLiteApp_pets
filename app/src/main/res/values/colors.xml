@@ -3,4 +3,13 @@
     <color name="colorPrimary">#ef524b</color>
     <color name="colorPrimaryDark">#c0413b</color>
     <color name="colorAccent">#ef524b</color>
+
+    <!-- Light \ Day Mode Color -->
+    <color name="light_background">#fff</color>
+    <color name="light_text">#000</color>
+    <color name="light_hint">#A2AAB0</color>
+    <!-- Light \ Day Mode Color -->
+    <color name="night_background">#020202</color>
+    <color name="night_text">#ffffff</color>
+    <color name="night_hint">#aea7a7</color>
 </resources>

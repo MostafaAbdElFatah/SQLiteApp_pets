@@ -1,11 +1,21 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Light \ Day Mode Style. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorBackground">@color/light_background</item>
+        <item name="colorText">@color/light_text</item>
+        <item name="colorHint">@color/light_hint</item>
+        <item name="imageSrcImageView">@drawable/ic_action_next</item>
+        <item name="textViewIndicator">@drawable/ic_action_down_light</item>
+        <item name="windowActionBar">false</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+        <item name="spinnerTextColor">@color/night_text</item>
+        <item name="spinnerBackgroundColor">@color/night_background</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -13,8 +23,42 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- Light \ Day Mode Style. -->
+    <style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorBackground">@color/night_background</item>
+        <item name="colorText">@color/night_text</item>
+        <item name="colorHint">@color/night_hint</item>
+        <item name="imageSrcImageView">@drawable/ic_action_next_dark</item>
+        <item name="textViewIndicator">@drawable/ic_action_down_dark</item>
+        <item name="windowActionBar">false</item>
+        <item name="popupTheme">@style/AppTheme.PopupOverlay</item>
+        <item name="spinnerTextColor">@color/light_text</item>
+        <item name="spinnerBackgroundColor">@color/light_background</item>
+    </style>
+
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:colorBackground">@color/night_background</item>
+        <item name="android:textColor">@color/night_text</item>
+    </style>
+
+    <style name="MySpinner" parent="Widget.AppCompat.Light.Spinner.DropDown.ActionBar">
+        <item name="android:dropDownSelector">#0f0</item>
+        <item name="android:divider">@color/colorPrimaryDark</item>
+        <item name="android:textColor">#00f</item>
+    </style>
+
+
+    <style name="spinnerItemStyle" parent="android:Widget.TextView.SpinnerItem">
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+    </style>
 
 </resources>

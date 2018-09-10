@@ -4,27 +4,23 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
-import comq.mostafa.fci.pets.data.Pet;
+import comq.mostafa.fci.pets.data.AlterDialog;
+import comq.mostafa.fci.pets.data.OnAPPModeChangedListener;
 import comq.mostafa.fci.pets.data.PetCursorAdapter;
-import comq.mostafa.fci.pets.data.PetsAdapter;
 import comq.mostafa.fci.pets.data.PetContract.PetEntry;
-import comq.mostafa.fci.pets.data.PetDBHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,16 +33,31 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (AlterDialog.getMode(MainActivity.this) == AppCompatDelegate.MODE_NIGHT_YES)
+            setTheme(R.style.DarkTheme);
+        else
+            setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        AlterDialog.setOnAPPModeChangedListener(new OnAPPModeChangedListener() {
+            @Override
+            public void onModeChanged(int mode) {
+                AppCompatDelegate.setDefaultNightMode(mode);
+                recreate();
+            }
+        });
+
         View emptyView = findViewById(R.id.empty_view);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this,AddActivity.class));
+                startActivity(new Intent(MainActivity.this,EditActivity.class));
             }
         });
 
@@ -80,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.removeItem(R.id.action_done);
+        menu.removeItem(R.id.action_delete);
         return true;
     }
 
@@ -91,16 +104,23 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.dummy_data) {
+        if (id == R.id.action_dummy_data) {
             insertPet();
             displayDatabaseInfo();
             return true;
-        }else if(id == R.id.delete_all){
+        }else if(id == R.id.action_delete_all){
             deleteAllPets();
             displayDatabaseInfo();
             return true;
+        }else if (id == R.id.action_setting){
+            showSetting();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSetting() {
+        AlterDialog.setup(MainActivity.this).create().show();
     }
 
     private void deleteAllPets() {

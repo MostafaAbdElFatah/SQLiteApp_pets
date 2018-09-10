@@ -17,12 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            android:textColor="#000"
+            android:textColor="?attr/colorText"
             android:text="name" />
         <TextView
             android:id="@+id/breed_textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorHint"
             android:text="breed" />
     </LinearLayout>
     <ImageView
@@ -31,6 +32,6 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:scaleType="fitXY"
-        android:background="@drawable/ic_action_next"/>
+        android:background="?attr/imageSrcImageView"/>
 
 </LinearLayout>

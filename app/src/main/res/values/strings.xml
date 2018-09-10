@@ -5,6 +5,7 @@
     <string name="action_insert_dummy_data">Insert Dummy Data</string>
     <string name="action_delete_all_entries">Delete All Pets</string>
     <string name="editor_activity_title_new_pet">Add a Pet</string>
+    <string name="action_setting">Setting</string>
     <string name="action_save">Save</string>
     <string name="action_delete">Delete</string>
     <string name="category_overview">Overview</string>
@@ -28,5 +29,8 @@
     <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
     <string name="discard">Discard</string>
     <string name="keep_editing">Keep Editing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
