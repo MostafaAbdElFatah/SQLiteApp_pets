@@ -244,7 +244,6 @@ public class EditFragment extends Fragment {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             mPetHasChanged = true;
-            //callBack.onDataChange(mPetHasChanged);
             EventBus.getDefault().post(MessageEvent.DATA_CHANGED);
             return false;
         }

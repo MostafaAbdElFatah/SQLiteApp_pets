@@ -91,7 +91,6 @@ public class EditActivity extends AppCompatActivity {
             }
             return true;
         }else if(id == R.id.action_delete){
-            //callBack.onDeletePet();
             EventBus.getDefault().post(MessageEvent.DELETE );
             return true;
         }else if(id == android.R.id.home) {
