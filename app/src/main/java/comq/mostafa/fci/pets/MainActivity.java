@@ -1,11 +1,16 @@
 package comq.mostafa.fci.pets;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
@@ -17,6 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import comq.mostafa.fci.pets.WidgetUtillilies.ActionsBridge;
+import comq.mostafa.fci.pets.WidgetUtillilies.PetsAppWidget;
 import comq.mostafa.fci.pets.data.AlterDialog;
 import comq.mostafa.fci.pets.data.OnAPPModeChangedListener;
 import comq.mostafa.fci.pets.data.PetCursorAdapter;
@@ -28,8 +35,11 @@ public class MainActivity extends AppCompatActivity {
     //PetDBHelper mDBHelper;
 
     ListView listView;
+
     //PetsAdapter mPetsAdapter;
     PetCursorAdapter mPetCursorAdapter;
+    FloatingActionButton mFab;
+    boolean isRotating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +63,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         View emptyView = findViewById(R.id.empty_view);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        mFab = findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this,EditActivity.class));
@@ -77,14 +88,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         //mDBHelper = new PetDBHelper(this);
         displayDatabaseInfo();
+
+        Intent intent = getIntent();
+        if (intent.getData() != null) {
+            showSetting();
+            intent.setData(null);
+        }
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         displayDatabaseInfo();
+        mFab.setTranslationX(180);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFab.animate().translationX(0);
+                mFabRotation(false, 600);
+            }
+        }, 600);
+    }
+
+    private void mFabRotation(boolean clockwise, long time) {
+
+        if (isRotating) return;
+        mFab.setRotation(0);
+        float rotateDegree = (clockwise ? 360 : -360);
+        isRotating = true;
+        mFab.animate()
+                .rotation(rotateDegree)
+                .setDuration(time);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                isRotating = false;
+            }
+        }, time - 400);
     }
 
     @Override
@@ -107,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_dummy_data) {
             insertPet();
             displayDatabaseInfo();
+            mFabRotation(false, 600);
             return true;
         }else if(id == R.id.action_delete_all){
             deleteAllPets();
@@ -129,12 +174,16 @@ public class MainActivity extends AppCompatActivity {
         int deletedRows = db.delete(PetEntry.TABLE_NAME, null, null);
         ***/
         int count = getContentResolver().delete(PetEntry.CONTENT_URI,null,null);
-        if (count == -1)
-            Toast.makeText(this, getString(R.string.editor_delete_pet_failed),
+        if (count == -1) {
+            Toast.makeText(this, getString(R.string.editor_delete_pets_failed),
                     Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, getString(R.string.editor_delete_pet_successful),
+        }else if (count == 0){
+            Toast.makeText(this, getString(R.string.editor_nothing_delete_pets),
                     Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(this, getString(R.string.editor_delete_pets_successful),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void insertPet(){
@@ -158,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayDatabaseInfo() {
+        ActionsBridge.updateWidget(MainActivity.this);
 
         /***
          pets.clear();
@@ -208,5 +258,7 @@ public class MainActivity extends AppCompatActivity {
         }
          **/
     }
+
+
 
 }

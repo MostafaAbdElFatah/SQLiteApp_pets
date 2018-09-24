@@ -13,17 +13,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import comq.mostafa.fci.pets.data.ActivityListener;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import comq.mostafa.fci.pets.data.AlterDialog;
-import comq.mostafa.fci.pets.data.FragmentListener;
+import comq.mostafa.fci.pets.data.MessageEvent;
 import comq.mostafa.fci.pets.data.OnAPPModeChangedListener;
 
 
-public class EditActivity extends AppCompatActivity implements FragmentListener.CallBack {
+public class EditActivity extends AppCompatActivity {
 
     Uri mCurrentUri = null;
     boolean mPetHasChanged = false;
-    private ActivityListener.CallBack callBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +54,22 @@ public class EditActivity extends AppCompatActivity implements FragmentListener.
         fragment.mCurrentUri = mCurrentUri;
         fragmentTransaction.add(R.id.fragContainer,fragment)
                             .commit();
-        callBack = fragment;
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.removeItem(R.id.action_delete_all);
         menu.removeItem(R.id.action_dummy_data);
+        if (mCurrentUri == null)
+            menu.removeItem(R.id.action_delete);
         return true;
     }
 
@@ -74,13 +83,16 @@ public class EditActivity extends AppCompatActivity implements FragmentListener.
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_done) {
             if (mCurrentUri == null) {
-               callBack.onSavePet();
+               //callBack.onSavePet();
+               EventBus.getDefault().post(MessageEvent.SAVE);
             } else{
-                callBack.onUpdatePet();
+                //callBack.onUpdatePet();
+                EventBus.getDefault().post(MessageEvent.UPDATE);
             }
             return true;
         }else if(id == R.id.action_delete){
-            callBack.onDeletePet();
+            //callBack.onDeletePet();
+            EventBus.getDefault().post(MessageEvent.DELETE );
             return true;
         }else if(id == android.R.id.home) {
             if (!mPetHasChanged) {
@@ -136,9 +148,19 @@ public class EditActivity extends AppCompatActivity implements FragmentListener.
         alertDialog.show();
     }
 
+    @Subscribe
+    public void onEvent(MessageEvent messageEvent){
+        switch (messageEvent){
+            case DATA_CHANGED:
+                mPetHasChanged = true;
+                break;
+        }
+    }
+
     @Override
-    public void onDataChange(boolean petHasChanged) {
-        mPetHasChanged = petHasChanged;
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
 }

@@ -1,6 +1,11 @@
 package comq.mostafa.fci.pets.data;
+import android.database.Cursor;
+import android.util.Log;
 
 import java.io.Serializable;
+import java.sql.Array;
+import java.util.ArrayList;
+import comq.mostafa.fci.pets.data.PetContract.PetEntry;
 
 public class Pet implements Serializable {
     private int  id;
@@ -55,5 +60,26 @@ public class Pet implements Serializable {
 
     public int getWeight() {
         return weight;
+    }
+
+    public static ArrayList<Pet> getPetsList(Cursor cursor){
+        ArrayList<Pet> pets = new ArrayList<>();
+
+        int idColumnIndex = cursor.getColumnIndex(PetEntry._ID);
+        int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
+        int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
+        int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+        int weightColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
+
+        while (cursor.moveToNext()){
+            int currentID = cursor.getInt(idColumnIndex);
+            String currentName = cursor.getString(nameColumnIndex);
+            String currentBreed = cursor.getString(breedColumnIndex);
+            int currentGender = cursor.getInt(genderColumnIndex);
+            int currentWeight = cursor.getInt(weightColumnIndex);
+            Pet pet = new Pet(currentID,currentName,currentBreed,currentGender,currentWeight);
+            pets.add(pet);
+        }
+        return pets;
     }
 }

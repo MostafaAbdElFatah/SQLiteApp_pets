@@ -16,12 +16,16 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import comq.mostafa.fci.pets.data.ActivityListener;
-import comq.mostafa.fci.pets.data.FragmentListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import comq.mostafa.fci.pets.WidgetUtillilies.ActionsBridge;
+import comq.mostafa.fci.pets.data.MessageEvent;
 import comq.mostafa.fci.pets.data.PetContract.PetEntry;
 
 
-public class EditFragment extends Fragment implements ActivityListener.CallBack{
+public class EditFragment extends Fragment {
 
     public Uri mCurrentUri;
     private EditText mNameEditText;
@@ -31,7 +35,6 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
     private boolean mPetHasChanged = false;
     private int mGender = PetEntry.GENDER_UNKNOWN;
 
-    private FragmentListener.CallBack callBack;
     //PetDBHelper mDBHelper;
 
     public EditFragment() {
@@ -41,7 +44,6 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        callBack = (FragmentListener.CallBack) context;
     }
 
     @Override
@@ -64,6 +66,7 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
         mWeightEditText.setOnTouchListener(mTouchListener);
         mGenderSpinner.setOnTouchListener(mTouchListener);
 
+        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -147,6 +150,7 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
                     Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            ActionsBridge.updateWidget(getContext());
             Toast.makeText(getContext(), getString(R.string.editor_insert_pet_successful),
                     Toast.LENGTH_SHORT).show();
             return true;
@@ -184,9 +188,11 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
         if (count == -1)
             Toast.makeText(getContext(), getString(R.string.editor_update_pet_failed),
                     Toast.LENGTH_SHORT).show();
-        else
+        else{
+            ActionsBridge.updateWidget(getContext());
             Toast.makeText(getContext(), getString(R.string.editor_update_pet_successful),
                     Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -202,38 +208,46 @@ public class EditFragment extends Fragment implements ActivityListener.CallBack{
         if (count == -1)
             Toast.makeText(getContext(), getString(R.string.editor_delete_pet_failed),
                     Toast.LENGTH_SHORT).show();
-        else
+        else {
+            ActionsBridge.updateWidget(getContext());
             Toast.makeText(getContext(), getString(R.string.editor_delete_pet_successful),
                     Toast.LENGTH_SHORT).show();
+        }
     }
 
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onEvent(MessageEvent messageEvent){
+        switch (messageEvent){
+            case SAVE:
+                if ( insertPet())
+                    getActivity().finish();
+                break;
+            case UPDATE:
+                updatePet();
+                getActivity().finish();
+                break;
+            case DELETE:
+                deletePet();
+                getActivity().finish();
+                break;
+        }
+    }
 
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             mPetHasChanged = true;
-            callBack.onDataChange(mPetHasChanged);
+            //callBack.onDataChange(mPetHasChanged);
+            EventBus.getDefault().post(MessageEvent.DATA_CHANGED);
             return false;
         }
     };
-
-    @Override
-    public void onSavePet() {
-        if ( insertPet())
-            getActivity().finish();
-    }
-
-    @Override
-    public void onUpdatePet() {
-        updatePet();
-        getActivity().finish();
-    }
-
-    @Override
-    public void onDeletePet() {
-        deletePet();
-        getActivity().finish();
-    }
 
 }

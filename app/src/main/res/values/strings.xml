@@ -24,6 +24,9 @@
     <string name="editor_update_pet_failed">Error with updating pet</string>
     <string name="editor_delete_pet_successful">Pet deleted</string>
     <string name="editor_delete_pet_failed">Error with deleting pet</string>
+    <string name="editor_delete_pets_successful">Pets deleted</string>
+    <string name="editor_delete_pets_failed">Error with deleting pets</string>
+    <string name="editor_nothing_delete_pets">Error with deleting pets</string>
     <string name="empty_view_title_text">It\'s a bit lonely here...</string>
     <string name="empty_view_subtitle_text">Get started by adding a pet</string>
     <string name="unsaved_changes_dialog_msg">Discard your changes and quit editing?</string>
@@ -32,5 +35,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>
